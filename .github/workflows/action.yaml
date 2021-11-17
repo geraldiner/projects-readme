@@ -1,9 +1,6 @@
 name: Update READMEs
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 jobs:
   action:
     runs-on: ubuntu-latest
