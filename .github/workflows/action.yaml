@@ -1,5 +1,4 @@
 name: Update READMEs
-description: Update the README.md files in all repos to include the same Other Projects section.
 
 on:
   push:
