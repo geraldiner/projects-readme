@@ -1,13 +1,3 @@
-## Other Projects
+## About
 
-Check out other stuff I've worked on:
-
-**Minute To Win It Games API & Wiki**: https://github.com/geraldiner/min-to-win
-
-**Rehabitter:** https://github.com/geraldiner/rehabitter
-
-**K.K. Radio:** https://github.com/geraldiner/kk-radio
-
-**Interactive Piano:** https://github.com/geraldiner/piano
-
-**Pom Poko Pomodoro:** https://github.com/geraldiner/pom-poko-pomodoro
+This repo holds a `projects.md` file that lists my most recent projects. It's used to update the "Other Projects" section for the README files across almost all my repos. There is a GitHub action tied to this repo that will run whenever `projects.md` is updated and pushed to this repo. It will then automatically update all the other README files.
