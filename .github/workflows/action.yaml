@@ -1,0 +1,21 @@
+name: Update READMEs
+description: Update the README.md files in all repos to include the same Other Projects section.
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Set up NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Install dependencies
+        run: npm ci
+      - name: Run main script
+        run: index.js
