@@ -3,7 +3,7 @@ require("dotenv").config();
 const axios = require("axios");
 const octokit = require("@octokit/core");
 
-const client = new octokit.Octokit({ auth: process.env.GITHUB_TOKEN });
+const client = new octokit.Octokit({ auth: process.env.GH_TOKEN });
 
 async function updateAllRepos() {
 	try {
