@@ -1,6 +1,9 @@
 name: Update READMEs
 
-on: [push]
+on:
+  push:
+    paths:
+      - "projects.md"
 jobs:
   action:
     runs-on: ubuntu-latest

@@ -28,11 +28,11 @@ async function updateReadMe(repo) {
 		const raw = await axios.get(download_url);
 		const rawText = raw.data;
 		const startIndex = rawText.indexOf("## Other Projects");
-		const updatedContent = rawText.slice(0, startIndex) + getNewProjectSection();
+		const updatedContent = `${startIndex === -1 ? rawText : rawText.slice(0, startIndex)}\n${getNewProjectSection()}`;
 		commitNewReadme(repo, path, sha, updatedContent);
 	} catch (error) {
 		try {
-			const content = getNewProjectSection();
+			const content = `\n${getNewProjectSection()}`;
 			await client.request(`PUT /repos/geraldiner/${repo}/contents/README.md`, {
 				message: "Create README",
 				content: Buffer.from(content, "utf-8").toString("base64"),
