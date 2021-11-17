@@ -14,7 +14,6 @@ async function updateAllRepos() {
 		const repos = res.data.filter(r => r.name !== "geraldiner");
 		for (let i = 0; i < repos.length; i++) {
 			const { name } = repos[i];
-			console.log(name);
 			updateReadMe(name);
 		}
 	} catch (error) {
