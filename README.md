@@ -1,3 +1,7 @@
+## About
+
+Repo for GitHub Action that updates the README file in all my repos with an updated list of projects (like the one below).
+
 ## Other Projects
 
 Check out other stuff I've worked on:
