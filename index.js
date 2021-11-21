@@ -1,6 +1,5 @@
 const fs = require("fs");
 require("dotenv").config();
-const axios = require("axios");
 const octokit = require("@octokit/core");
 
 const client = new octokit.Octokit({ auth: process.env.GH_TOKEN });
@@ -24,18 +23,17 @@ async function updateAllRepos() {
 async function updateReadMe(repo) {
 	try {
 		const res = await client.request(`GET /repos/geraldiner/${repo}/contents/README.md`);
-		const { path, sha, download_url } = res.data;
-		const raw = await axios.get(download_url);
-		const rawText = raw.data;
-		const startIndex = rawText.indexOf("## Other Projects");
-		const updatedContent = `${startIndex === -1 ? rawText : rawText.slice(0, startIndex)}\n${getNewProjectSection()}`;
-		commitNewReadme(repo, path, sha, updatedContent);
+		const { path, sha, content, encoding } = res.data;
+		const rawContent = Buffer.from(content, encoding).toString();
+		const startIndex = rawContent.indexOf("## Other Projects");
+		const updatedContent = `${startIndex === -1 ? rawContent : rawContent.slice(0, startIndex)}\n${getNewProjectSection()}`;
+		commitNewReadme(repo, path, sha, encoding, updatedContent);
 	} catch (error) {
 		try {
 			const content = `\n${getNewProjectSection()}`;
 			await client.request(`PUT /repos/geraldiner/${repo}/contents/README.md`, {
 				message: "Create README",
-				content: Buffer.from(content, "utf-8").toString("base64"),
+				content: Buffer.from(content, "utf-8").toString(encoding),
 			});
 		} catch (err) {
 			console.log(err);
@@ -43,11 +41,11 @@ async function updateReadMe(repo) {
 	}
 }
 
-async function commitNewReadme(repo, path, sha, updatedContent) {
+async function commitNewReadme(repo, path, sha, encoding, updatedContent) {
 	try {
 		await client.request(`PUT /repos/geraldiner/${repo}/contents/{path}`, {
 			message: "Update README",
-			content: Buffer.from(updatedContent, "utf-8").toString("base64"),
+			content: Buffer.from(updatedContent, "utf-8").toString(encoding),
 			path,
 			sha,
 		});
