@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@octokit/core": "^3.6.0",
+    "@octokit/core": "^7.0.3",
     "dotenv": "^10.0.0",
-    "nodemon": "^2.0.22"
+    "nodemon": "^3.1.10"
   }
 }
