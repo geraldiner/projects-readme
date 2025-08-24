@@ -17,7 +17,7 @@ async function updateAllRepos() {
       per_page: "100",
     });
     const repos = res.data.filter(
-      (r) => !skipProjects.includes(r.name) && r.owner.login === "geraldiner"
+      (r) => !skipProjects.includes(r.name) && !r.fork
     );
     for (let i = 0; i < repos.length; i++) {
       const { name } = repos[i];
