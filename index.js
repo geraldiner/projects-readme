@@ -3,6 +3,12 @@ require("dotenv").config();
 const octokit = require("@octokit/core");
 
 const client = new octokit.Octokit({ auth: process.env.GH_TOKEN });
+const skipProjects = [
+  "geraldiner",
+  "projects-readme",
+  "geraldiner.com",
+  "happiandco.com",
+];
 
 async function updateAllRepos() {
   try {
@@ -11,11 +17,7 @@ async function updateAllRepos() {
       per_page: "100",
     });
     const repos = res.data.filter(
-      (r) =>
-        r.name !== "geraldiner" &&
-        r.name !== "projects-readme" &&
-        r.name !== "geraldiner.com" &&
-        r.name !== "happiandco.com"
+      (r) => !skipProjects.includes(r.name) && r.owner.login === "geraldiner"
     );
     for (let i = 0; i < repos.length; i++) {
       const { name } = repos[i];
