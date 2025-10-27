@@ -3,12 +3,7 @@ require("dotenv").config();
 const octokit = require("@octokit/core");
 
 const client = new octokit.Octokit({ auth: process.env.GH_TOKEN });
-const skipProjects = [
-  "geraldiner",
-  "projects-readme",
-  "geraldiner.com",
-  "happiandco.com",
-];
+const skipProjects = ["geraldiner"];
 
 async function updateAllRepos() {
   try {
