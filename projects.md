@@ -2,9 +2,9 @@
 
 Check out other stuff I've worked on:
 
-**Reuben Sandwiches**: https://github.com/geraldiner/reuben-sandwiches
+**Sushi Menu Filter**: https://github.com/geraldiner/sushi-menu-filter
 
-**Nook Music**: https://github.com/geraldiner/nook-music
+**Reuben Sandwiches**: https://github.com/geraldiner/reuben-sandwiches
 
 **Animal Crossing API**: https://github.com/geraldiner/ac-api
 

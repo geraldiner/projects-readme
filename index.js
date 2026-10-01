@@ -3,7 +3,7 @@ require("dotenv").config();
 const octokit = require("@octokit/core");
 
 const client = new octokit.Octokit({ auth: process.env.GH_TOKEN });
-const skipProjects = ["geraldiner"];
+const skipProjects = ["geraldiner", "projects-readme"];
 
 async function updateAllRepos() {
   try {
@@ -12,7 +12,7 @@ async function updateAllRepos() {
       per_page: "100",
     });
     const repos = res.data.filter(
-      (r) => !skipProjects.includes(r.name) && !r.fork
+      (r) => !skipProjects.includes(r.name) && !r.fork,
     );
     for (let i = 0; i < repos.length; i++) {
       const { name } = repos[i];
@@ -26,7 +26,7 @@ async function updateAllRepos() {
 async function updateReadMe(repo) {
   try {
     const res = await client.request(
-      `GET /repos/geraldiner/${repo}/contents/README.md`
+      `GET /repos/geraldiner/${repo}/contents/README.md`,
     );
     const { path, sha, content, encoding } = res.data;
     const rawContent = Buffer.from(content, encoding).toString();
