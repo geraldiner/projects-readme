@@ -5,19 +5,28 @@ dotenv.config();
 
 const octokit = new Octokit({ auth: process.env.GH_TOKEN });
 
-// Repos to skip: Github readme, personal website, and this repo
-const skipRepos = ["geraldiner", "geraldiner.com", "projects-readme"];
+// Repos to skip: Github readme
+const skipRepos = ["geraldiner"];
 
 async function updateAllRepos() {
   try {
     // Get only the repos that are owned by the user and sort them by last updated
-    const response = await octokit.request("GET /user/repos", {
+    const allRepos = await octokit.paginate("GET /user/repos", {
       type: "owner",
+      per_page: 100,
     });
-    // Skip the repos that are in the skipRepos array
-    const repos = response.data.filter(
-      (repo) => !skipRepos.includes(repo.name.toLowerCase()) && !repo.fork,
-    );
+    // Skip the repos that are in the skipRepos array, forks, or archived
+    const repos = allRepos.filter((repo) => {
+      if (
+        !skipRepos.includes(repo.name.toLowerCase()) &&
+        !repo.fork &&
+        !repo.archived
+      ) {
+        return true;
+      }
+      console.log(`Skipping ${repo.name}...`);
+      return false;
+    });
     // Update the README for each repo
     for (const repo of repos) {
       console.log(`Updating README for ${repo.name}...`);
