@@ -2,11 +2,11 @@
 
 Check out other stuff I've worked on:
 
-**Sushi Menu Filter**: https://github.com/geraldiner/sushi-menu-filter
-
-**Reuben Sandwiches**: https://github.com/geraldiner/reuben-sandwiches
+**Min To Win**: https://github.com/geraldiner/min-to-win
 
 **Animal Crossing API**: https://github.com/geraldiner/ac-api
+
+**Reuben Sandwiches**: https://github.com/geraldiner/reuben-sandwiches
 
 ## 🤙 Let's connect
 

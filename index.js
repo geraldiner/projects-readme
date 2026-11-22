@@ -30,7 +30,7 @@ async function updateReadMe(repo) {
     );
     const { path, sha, content, encoding } = res.data;
     const rawContent = Buffer.from(content, encoding).toString();
-    const startIndex = rawContent.indexOf("## Other Projects");
+    const startIndex = rawContent.indexOf("## 🚀 Other Projects");
     const updatedContent = `${
       startIndex === -1 ? rawContent : rawContent.slice(0, startIndex)
     }\n${getNewProjectSection()}`;
