@@ -1,68 +1,79 @@
-const fs = require("fs");
-require("dotenv").config();
-const octokit = require("@octokit/core");
+import dotenv from "dotenv";
+import fs from "fs";
+import { Octokit } from "octokit";
+dotenv.config();
 
-const client = new octokit.Octokit({ auth: process.env.GH_TOKEN });
-const skipProjects = ["geraldiner", "projects-readme"];
+const octokit = new Octokit({ auth: process.env.GH_TOKEN });
+
+// Repos to skip: Github readme, personal website, and this repo
+const skipRepos = ["geraldiner", "geraldiner.com", "projects-readme"];
 
 async function updateAllRepos() {
   try {
-    const res = await client.request("GET /user/repos", {
-      sort: "updated",
-      per_page: "100",
+    // Get only the repos that are owned by the user and sort them by last updated
+    const response = await octokit.request("GET /user/repos", {
+      type: "owner",
     });
-    const repos = res.data.filter(
-      (r) => !skipProjects.includes(r.name) && !r.fork,
+    // Skip the repos that are in the skipRepos array
+    const repos = response.data.filter(
+      (repo) => !skipRepos.includes(repo.name.toLowerCase()) && !repo.fork,
     );
-    for (let i = 0; i < repos.length; i++) {
-      const { name } = repos[i];
-      updateReadMe(name);
+    // Update the README for each repo
+    for (const repo of repos) {
+      console.log(`Updating README for ${repo.name}...`);
+      await updateOrCreateREADME(repo);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
-async function updateReadMe(repo) {
+async function updateOrCreateREADME(repo) {
   try {
-    const res = await client.request(
-      `GET /repos/geraldiner/${repo}/contents/README.md`,
+    // Get the README file for the repo
+    const response = await octokit.request(
+      `GET /repos/geraldiner/${repo.name}/readme`,
     );
-    const { path, sha, content, encoding } = res.data;
+    const { path, sha, content, encoding } = response.data;
     const rawContent = Buffer.from(content, encoding).toString();
     const startIndex = rawContent.indexOf("## 🚀 Other Projects");
-    const updatedContent = `${
-      startIndex === -1 ? rawContent : rawContent.slice(0, startIndex)
-    }\n${getNewProjectSection()}`;
-    commitNewReadme(repo, path, sha, encoding, updatedContent);
+    const updatedContent =
+      `${
+        startIndex === -1 ? rawContent : rawContent.slice(0, startIndex)
+      }`.trim() + `\n${getNewProjectSection()}`;
+    await commitNewReadme(repo.name, path, sha, encoding, updatedContent);
   } catch (error) {
-    try {
-      const content = `\n${getNewProjectSection()}`;
-      await client.request(`PUT /repos/geraldiner/${repo}/contents/README.md`, {
-        message: "Create README",
-        content: Buffer.from(content, "utf-8").toString(encoding),
-      });
-    } catch (err) {
-      console.log(err);
+    if (error.status === 404) {
+      // If the README file doesn't exist, create it
+      const content = `# ${repo.name}\n\n${getNewProjectSection()}`;
+      await octokit.request(
+        `PUT /repos/geraldiner/${repo.name}/contents/README.md`,
+        {
+          message: "Create README",
+          content: Buffer.from(content, "utf-8").toString("base64"),
+        },
+      );
+    } else {
+      console.error(error);
     }
   }
+}
+
+function getNewProjectSection() {
+  return fs.readFileSync("projects.md").toString();
 }
 
 async function commitNewReadme(repo, path, sha, encoding, updatedContent) {
   try {
-    await client.request(`PUT /repos/geraldiner/${repo}/contents/{path}`, {
+    await octokit.request(`PUT /repos/geraldiner/${repo}/contents/{path}`, {
       message: "Update README",
       content: Buffer.from(updatedContent, "utf-8").toString(encoding),
       path,
       sha,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
-}
-
-function getNewProjectSection() {
-  return fs.readFileSync("projects.md").toString();
 }
 
 updateAllRepos();
